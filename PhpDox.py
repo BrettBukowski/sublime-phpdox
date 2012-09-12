@@ -1,9 +1,10 @@
-import sublime, sublime_plugin
+import sublime_plugin
 import re
 
 syntax_list = {
     "PHP": True
 }
+
 
 class PhpdoxCommand(sublime_plugin.TextCommand):
 
@@ -12,7 +13,7 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
     templates = {
 
 # Class template
-        'class':"""
+        'class': """
 /**
 * ${{1:{0}}}
 *
@@ -26,7 +27,7 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
 */""",
 
 # Interface template
-        'interface':"""
+        'interface': """
 /**
 * ${{1:{0}}}
 *
@@ -40,7 +41,7 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
 */""",
 
 # Function template
-        'function':"""
+        'function': """
     /**
      * ${{1:{name}}}
      * {params}
@@ -50,7 +51,7 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
      */""",
 
 # Variable template
-        'variable':"""
+        'variable': """
     /**
      * ${{1:\\{name}}}
      *
@@ -84,7 +85,6 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
                 return method(match)
         return None
 
-
     def dox_class(self, match):
         """Resolves class's PHPDoc by given match"""
         return self.templates['class'].format(*match.group('name_class', 'name_parent'))
@@ -112,7 +112,6 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
             'type': self.resolve_var_type(match.group('value')),
         }
         return self.templates['variable'].format(**tokens)
-
 
     def resolve_access(self, val):
         """Resolves access modifier value"""
