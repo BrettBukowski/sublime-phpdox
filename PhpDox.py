@@ -16,28 +16,18 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
         'class': """
 /**
 * ${{1:{0}}}
-*
-* @uses     {1}
-*
+* @uses {1}
 * @category ${{2:Category}}
 * @package  ${{3:Package}}
-* @author   ${{TM_FULLNAME}} <${{TM_EMAIL}}>
-* @license  GNU GPL v3.0 {{@link http://www.gnu.org/copyleft/gpl.html}}
-* @link     ${{4:http://www.example.com}}
 */""",
 
 # Interface template
         'interface': """
 /**
 * ${{1:{0}}}
-*
-* @uses     {1}
-*
+* @uses {1}
 * @category ${{2:Category}}
 * @package  ${{3:Package}}
-* @author   ${{TM_FULLNAME}} <${{TM_EMAIL}}>
-* @license  GNU GPL v3.0 {{@link http://www.gnu.org/copyleft/gpl.html}}
-* @link     ${{4:http://www.example.com}}
 */""",
 
 # Function template
@@ -45,8 +35,6 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
     /**
      * ${{1:{name}}}
      * {params}
-     * @access {access}{static}
-     *
      * @return ${{2:mixed}} ${{3:Value}}.
      */""",
 
@@ -54,9 +42,7 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
         'variable': """
     /**
      * ${{1:\\{name}}}
-     *
      * @var {type}
-     *
      * @access {access}{static}
      */"""
     }
@@ -142,7 +128,8 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
             if (len(name) > name_width):
                 name_width = len(name)
         for v_type, v_name in params:
-            lines.append('     * @param {0:{1}} \\{2:{3}} Description.'.format(v_type, type_width, v_name, name_width))
+            lines.append('     * @param {0:{1}} \\{2:{3}} Description'.format(v_type, type_width, v_name, name_width))
+        print lines
         return '\n' + '\n'.join(lines) + '\n     *'
 
     def resolve_var_type(self, val):
