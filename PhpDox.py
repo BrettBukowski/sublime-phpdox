@@ -33,9 +33,8 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
 # Function template
         'function': """
     /**
-     * ${{1:{name}}}
-     * {params}
-     * @return ${{2:mixed}} ${{3:Value}}.
+     * ${{1:{name}}}{params}
+     * @return ${{2:mixed}} ${{3:Value}}
      */""",
 
 # Variable template
@@ -129,8 +128,7 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
                 name_width = len(name)
         for v_type, v_name in params:
             lines.append('     * @param {0:{1}} \\{2:{3}} Description'.format(v_type, type_width, v_name, name_width))
-        print lines
-        return '\n' + '\n'.join(lines) + '\n     *'
+        return '\n' + '\n'.join(lines)
 
     def resolve_var_type(self, val):
         """Resolves variable's type by given value"""
