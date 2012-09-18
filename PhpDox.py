@@ -34,7 +34,7 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
         'function': """
     /**
      * ${{1:{name}}}{params}
-     * @return ${{2:mixed}} ${{3:Value}}
+     * @return ${{{tabstop1}:mixed}} ${{{tabstop2}:Value}}
      */""",
 
 # Variable template
@@ -80,12 +80,16 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
 
     def dox_function(self, match):
         """Resolves function's PHPDoc by given match"""
+        params, tabstop_index = self.resolve_params(match.group('params'))
         tokens = {
             'access': self.resolve_access(match.group('access')),
             'name': match.group('name'),
-            'params': self.resolve_params(match.group('params')),
+            'params': params,
             'static': self.resolve_static(match.group('static')),
+            'tabstop1': tabstop_index,
+            'tabstop2': tabstop_index + 1,
         }
+        print self.templates['function'].format(**tokens)
         return self.templates['function'].format(**tokens)
 
     def dox_variable(self, match):
@@ -113,11 +117,13 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
     def resolve_params(self, val):
         """Resolves method's parameters description"""
         if (val == ''):
-            return val
+            return [val, 2]
         type_width = 0
         name_width = 0
         params = []
         lines = []
+        tabstop_index = 2
+
         for param in val.replace(' ', '').split(','):
             name, assign, value = param.partition('=')
             v_type = self.resolve_var_type(value)
@@ -126,9 +132,12 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
                 type_width = len(v_type)
             if (len(name) > name_width):
                 name_width = len(name)
-        for v_type, v_name in params:
-            lines.append('     * @param {0:{1}} \\{2:{3}} Description'.format(v_type, type_width, v_name, name_width))
-        return '\n' + '\n'.join(lines)
+        for count, pair in enumerate(params):
+            v_type, v_name = pair
+            lines.append('     * @param ${{{0}:{1:{2}}}} \\{3:{4}} ${{{5}:Description}}'.format(count + (count + 2), v_type, type_width, v_name, name_width, count + (count + 3)))
+            tabstop_index = count + (count + 4)
+            # lines.append('     * @param {0:{1}} \\{2:{3}} Description'.format(v_type, type_width, v_name, name_width))
+        return ['\n' + '\n'.join(lines), tabstop_index]
 
     def resolve_var_type(self, val):
         """Resolves variable's type by given value"""
