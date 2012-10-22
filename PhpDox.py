@@ -118,8 +118,6 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
         """Resolves method's parameters description"""
         if (val == ''):
             return [val, 2]
-        type_width = 0
-        name_width = 0
         params = []
         lines = []
         tabstop_index = 2
@@ -128,15 +126,10 @@ class PhpdoxCommand(sublime_plugin.TextCommand):
             name, assign, value = param.partition('=')
             v_type = self.resolve_var_type(value)
             params.append([v_type, name])
-            if (len(v_type) > type_width):
-                type_width = len(v_type)
-            if (len(name) > name_width):
-                name_width = len(name)
         for count, pair in enumerate(params):
             v_type, v_name = pair
-            lines.append('     * @param ${{{0}:{1:{2}}}} \\{3:{4}} ${{{5}:Description}}'.format(count + (count + 2), v_type, type_width, v_name, name_width, count + (count + 3)))
+            lines.append('     * @param ${{{0}:{1}}} \\{2} ${{{3}:Description}}'.format(count + (count + 2), v_type, v_name, count + (count + 3)))
             tabstop_index = count + (count + 4)
-            # lines.append('     * @param {0:{1}} \\{2:{3}} Description'.format(v_type, type_width, v_name, name_width))
         return ['\n' + '\n'.join(lines), tabstop_index]
 
     def resolve_var_type(self, val):
